@@ -11,7 +11,7 @@ app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com'
 app.use((req, res, next) => {
     const userAgent = req.headers['user-agent'];
     if (userAgent && userAgent.includes('Chrome')) {
-        return res.status(403).send('Website bị chặn trên Chrome.');
+        return res.status(403).send('Không hỗ trợ truy cập từ trình duyệt Chrome');
     }
     next();
 });
