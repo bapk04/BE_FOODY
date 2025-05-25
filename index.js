@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000','https://fe-foody.onrender.com' }));
+app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com'] }));
 app.use(express.json());
 
 // Supabase Client
