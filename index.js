@@ -7,7 +7,20 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000' }));
+const allowedOrigins = ['http://localhost:3000', 'https://fe-foody.onrender.com'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Cho phép các request không có origin (như curl hoặc mobile app)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
 app.use(express.json());
 
 // Supabase Client
