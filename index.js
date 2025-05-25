@@ -7,7 +7,15 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com'] }));
+app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn'] }));
+app.use((req, res, next) => {
+    const userAgent = req.headers['user-agent'];
+    if (userAgent && userAgent.includes('Chrome')) {
+        return res.status(403).send('Website bị chặn trên Chrome.');
+    }
+    next();
+});
+
 app.use(express.json());
 
 // Supabase Client
