@@ -7,17 +7,17 @@ const app = express();
 const PORT = 3001;
 
 // Middleware
-app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn', 'https://hoxuanhung2802.id.vn/'] }));
-// app.use((req, res, next) => {
-//   const userAgent = req.headers['user-agent'];
+app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn', 'https://hoxuanhung2802.id.vn'] }));
+app.use((req, res, next) => {
+  const userAgent = req.headers['user-agent'];
 
-//   // Kiểm tra nếu là Chrome và domain là hoxuanhung2802.id.vn
-//   if (req.hostname === 'hoxuanhung2802.id.vn' && /Chrome/.test(userAgent)) {
-//     return res.status(403).send('Truy cập bằng Chrome không được phép');
-//   }
+  // Kiểm tra nếu là Chrome và domain là hoxuanhung2802.id.vn
+  if (req.hostname === 'hoxuanhung2802.id.vn' && /Chrome/.test(userAgent)) {
+    return res.status(403).send('Truy cập bằng Chrome không được phép');
+  }
 
-//   next();
-// });
+  next();
+});
 
 
 app.use(express.json());
