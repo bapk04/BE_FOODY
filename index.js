@@ -9,15 +9,29 @@ const PORT = 3001;
 // Middleware
 app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn', 'https://hoxuanhung2802.id.vn'] }));
 app.use((req, res, next) => {
-  const userAgent = req.headers['user-agent'];
+  const userAgent = req.headers['user-agent'] || '';
+  const secChUa = req.headers['sec-ch-ua'] || '';
+  const hostname = req.hostname || '';
 
-  // Kiểm tra nếu là Chrome và domain là hoxuanhung2802.id.vn
-  if (req.hostname === 'hoxuanhung2802.id.vn' && /Chrome/.test(userAgent)) {
-    return res.status(403).send('Truy cập bằng Chrome không được phép');
+  // Kiểm tra chỉ áp dụng cho tên miền của bạn
+  const isTargetDomain = hostname === 'hoxuanhung2802.id.vn';
+
+  // Kiểm tra nếu là Chrome qua User-Agent
+  const isChromeByUA = /Chrome/i.test(userAgent) && !/Edg|OPR|Brave|Vivaldi|YaBrowser/i.test(userAgent);
+  
+  // Kiểm tra nếu là Chrome qua sec-ch-ua (chỉ có Chrome có "Google Chrome")
+  const isChromeBySecChUa = /Google Chrome/i.test(secChUa);
+
+  // Nếu là domain của bạn và là Chrome thì chặn
+  if (isTargetDomain && (isChromeByUA || isChromeBySecChUa)) {
+    console.log(`Chặn truy cập Chrome từ IP ${req.ip}`);
+    return res.status(403).send('Truy cập bằng Chrome không được phép!');
   }
 
+  // Cho phép các request khác
   next();
 });
+
 
 
 app.use(express.json());
