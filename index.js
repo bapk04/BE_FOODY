@@ -8,30 +8,52 @@ const PORT = 3001;
 
 // Middleware
 app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn', 'https://hoxuanhung2802.id.vn'] }));
-// app.use((req, res, next) => {
-//   const userAgent = req.headers['user-agent'] || '';
-//   const secChUa = req.headers['sec-ch-ua'] || '';
-//   const hostname = req.hostname || '';
 
-//   // Kiểm tra chỉ áp dụng cho tên miền của bạn
-//   const isTargetDomain = hostname === 'hoxuanhung2802.id.vn';
+app.use((req, res, next) => {
+  const hostname = req.hostname || '';
+  if (hostname === 'hoxuanhung2802.id.vn') {
+    const userAgent = req.headers['user-agent'] || '';
+    const secChUa = req.headers['sec-ch-ua'] || '';
 
-//   // Kiểm tra nếu là Chrome qua User-Agent
-//   const isChromeByUA = /Chrome/i.test(userAgent) && !/Edg|OPR|Brave|Vivaldi|YaBrowser/i.test(userAgent);
-  
-//   // Kiểm tra nếu là Chrome qua sec-ch-ua (chỉ có Chrome có "Google Chrome")
-//   const isChromeBySecChUa = /Google Chrome/i.test(secChUa);
+    // Kiểm tra Chrome bằng User-Agent và sec-ch-ua
+    const isChromeByUA = /Chrome/i.test(userAgent) && !/Edg|OPR|Brave|Vivaldi|YaBrowser/i.test(userAgent);
+    const isChromeBySecChUa = /Google Chrome/i.test(secChUa);
 
-//   // Nếu là domain của bạn và là Chrome thì chặn
-//   if (isTargetDomain && (isChromeByUA || isChromeBySecChUa)) {
-//     console.log(`Chặn truy cập Chrome từ IP ${req.ip}`);
-//     return res.status(403).send('Truy cập bằng Chrome không được phép!');
-//   }
+    if (isChromeByUA || isChromeBySecChUa) {
+      const cloudflareBlockHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Access Denied</title>
+        <style>
+          body { font-family: Arial, sans-serif; background: #fff; color: #000; text-align: center; padding: 40px; }
+          h1 { font-size: 36px; margin-bottom: 10px; }
+          p { font-size: 18px; }
+          .container { max-width: 600px; margin: auto; }
+          .ray-id { margin-top: 20px; color: #888; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Sorry, you have been blocked</h1>
+          <p>You are unable to access <strong>${hostname}</strong></p>
+          <p><strong>Why have I been blocked?</strong></p>
+          <p>This website is using a security service to protect itself from online attacks. The action you just performed triggered the security solution. There are several actions that could trigger this block including submitting a certain word or phrase, a SQL command or malformed data.</p>
+          <p><strong>What can I do to resolve this?</strong></p>
+          <p>You can email the site owner to let them know you were blocked. Please include what you were doing when this page came up.</p>
+          <p class="ray-id">Your IP: ${req.ip} • Performance & security by YourSite</p>
+        </div>
+      </body>
+      </html>
+      `;
 
-//   // Cho phép các request khác
-//   next();
-// });
-
+      return res.status(403).send(cloudflareBlockHtml);
+    }
+  }
+  next();
+});
 
 
 app.use(express.json());
