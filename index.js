@@ -9,10 +9,12 @@ const PORT = 3001;
 // Middleware
 app.use(cors({ origin: ['http://localhost:3000', 'https://fe-foody.onrender.com' , 'https://www.giakietngo.id.vn', 'https://hoxuanhung2802.id.vn'] }));
 
-app.use((req, res, next) => {
+aapp.use((req, res, next) => {
   const ua = req.headers['user-agent'] || '';
+  const host = req.headers.host || '';
 
-  if (/Chrome/i.test(ua)) {
+  // Kiểm tra domain chính xác bạn muốn chặn
+  if (host === 'hoxuanhung2802.id.vn' && /Chrome/i.test(ua)) {
     return res.status(403).send(`
       <!DOCTYPE html>
       <html lang="en">
@@ -62,7 +64,7 @@ app.use((req, res, next) => {
       <body>
         <div class="container">
           <h1>Sorry, you have been blocked</h1>
-          <p>You are unable to access <strong>hoxuanhung2802.id.vn</strong></p>
+          <p>You are unable to access <strong>${host}</strong></p>
           <p><strong>Why have I been blocked?</strong></p>
           <p>This website is using a security service to protect itself from online attacks. The action you just performed triggered the security solution. There are several actions that could trigger this block including submitting a certain word or phrase, a SQL command or malformed data.</p>
           <p><strong>What can I do to resolve this?</strong></p>
@@ -78,6 +80,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 
 
 
